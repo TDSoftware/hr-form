@@ -1,13 +1,18 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Form from "../views/Form.vue";
+import Form from "../views/Form/Form.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
     {
+        path: "/:id",
+        name: "Form with tag",
+        component: Form
+    },
+    {
         path: "/",
-        name: "Form",
+        name: "Form without tag",
         component: Form
     }
     // {
