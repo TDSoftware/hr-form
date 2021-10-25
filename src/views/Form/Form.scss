@@ -29,16 +29,24 @@
         margin-top: 1em;
       }
 
-      input {
+      input,
+      textarea {
         height: 30px;
         border-radius: 5px;
         border: 2px solid #ddd;
         padding: 0 10px;
         font-size: 16px;
+        font-family: Avenir, Helvetica, Arial, sans-serif;
 
         &:focus {
           outline-color: #eb5826;
         }
+      }
+
+      textarea {
+        resize: none;
+        padding-top: 5px;
+        height: 200px;
       }
 
       button {

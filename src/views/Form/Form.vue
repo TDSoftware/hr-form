@@ -9,6 +9,8 @@
         <input v-model="lastName" />
         <label>Email</label>
         <input v-model="email" />
+        <label>Job interests</label>
+        <textarea v-model="interests" />
         <button type="submit" :class="{loading: isLoading}">Subscribe</button>
       </form>
 
