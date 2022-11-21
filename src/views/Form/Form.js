@@ -9,46 +9,14 @@ export default {
             email: "",
             interests: "",
             error: "",
-            isLoading: false,
-            tags: []
+            isLoading: false
         };
     },
-    watch: {
-        "$route.params"(to) {
-            if (!to.id) this.getTags();
-            else this.isValidTag();
-        }
-    },
     created() {
-        if(!this.$route.params?.id) this.getTags();
-        else this.isValidTag();
+
         // this.get();
     },
     methods: {
-        async getTags() {
-            this.error = "";
-            try {
-                const response = await http().get("candidate_tag?page_size=100");
-                if(response) {
-                    this.tags = response.data.data.filter(tag => tag["created_at"] >= "2021-10-25T12:53:19+02:00");
-                }
-            }catch(error) {
-                const errorString: string = error.response?.data?.message || "Sending form failed";
-                this.error = "Error: " + errorString;
-            }
-        },
-        async isValidTag() {
-            this.error = "";
-            try {
-                const response = await http().get("candidate_tag?page_size=100");
-                if(!(response && response.data.data.find(tag => String(tag.id) === this.$route.params?.id))) {
-                    await this.$router.push("/");
-                }
-            } catch(error) {
-                const errorString: string = error.response?.data?.message || "Sending form failed";
-                this.error = "Error: " + errorString;
-            }
-        },
         async get() {
             this.error = "";
             try {

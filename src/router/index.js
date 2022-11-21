@@ -6,13 +6,8 @@ Vue.use(VueRouter);
 
 const routes = [
     {
-        path: "/:id",
-        name: "Form with tag",
-        component: Form
-    },
-    {
         path: "/",
-        name: "Form without tag",
+        name: "Form",
         component: Form
     }
     // {
