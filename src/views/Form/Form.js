@@ -1,4 +1,4 @@
-import { http } from "../../utils/http";
+import { xml, http } from "../../utils/http";
 
 export default {
     name: "Form",
@@ -10,52 +10,28 @@ export default {
             interests: "",
             error: "",
             isLoading: false,
-            tags: []
+            openPositions: [],
+            selectedPosition: ""
         };
     },
-    watch: {
-        "$route.params"(to) {
-            if (!to.id) this.getTags();
-            else this.isValidTag();
-        }
-    },
     created() {
-        if(!this.$route.params?.id) this.getTags();
-        else this.isValidTag();
-        // this.get();
+        this.get();
     },
     methods: {
-        async getTags() {
-            this.error = "";
-            try {
-                const response = await http().get("candidate_tag?page_size=100");
-                if(response) {
-                    this.tags = response.data.data.filter(tag => tag["created_at"] >= "2021-10-25T12:53:19+02:00");
-                }
-            }catch(error) {
-                const errorString: string = error.response?.data?.message || "Sending form failed";
-                this.error = "Error: " + errorString;
-            }
-        },
-        async isValidTag() {
-            this.error = "";
-            try {
-                const response = await http().get("candidate_tag?page_size=100");
-                if(!(response && response.data.data.find(tag => String(tag.id) === this.$route.params?.id))) {
-                    await this.$router.push("/");
-                }
-            } catch(error) {
-                const errorString: string = error.response?.data?.message || "Sending form failed";
-                this.error = "Error: " + errorString;
-            }
-        },
         async get() {
             this.error = "";
             try {
-                const response = await http().get("candidate?");
-                console.log("candidate", response.data);
-                const response2 = await http().get("application");
-                console.log("job", response2.data);
+                 const response = await xml().get();      
+                 console.log("open positions", response.data);          
+                 const parser = new DOMParser();
+                 const xmlDoc = parser.parseFromString(response.data, "application/xml");
+                 const nameElements = xmlDoc.getElementsByTagName("name");
+                 for (let i = 0; i < nameElements.length; i++) {
+                    const element = nameElements[i];
+                    if (element.parentNode.nodeName === "position") {
+                        this.openPositions.push(element.innerHTML);
+                    }
+                }
             } catch(error) {
                 const errorString: string = error.response?.data?.message || "Sending form failed";
                 this.error = "Error: " + errorString;
@@ -65,14 +41,13 @@ export default {
             this.error = "";
             this.isLoading = true;
             try {
-                await http().post("candidate", {
-                    profile: {
-                        firstname: this.firstName,
-                        lastname: this.lastName
-                    },
-                    email: this.email,
-                    "candidate_tag_ids": [this.$route.params?.id],
-                    "motivational_letter": this.interests
+                await http().post("data", {
+                    "first_name": this.firstName,
+                    "last_name": this.lastName,
+                    "email": this.email,
+                    "job_position_id": 893585,
+                    "message": this.selectedPosition + " " + this.interests,
+                    "application_date": new Date().toISOString().split("T")[0]
                 });
                 this.$toastr.render("Form send successfully");
                 this.clearForm();

@@ -1,3 +1,4 @@
+@import '~vue-select/dist/vue-select.css';
 @keyframes rotate {
   from {
     transform: rotate(0deg);
@@ -84,20 +85,6 @@
           top: 10px;
         }
       }
-    }
-  }
-
-  .tags {
-    display: flex;
-    flex-direction: column;
-
-    button {
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      padding: 10px;
-      font-size: 16px;
-      background: white;
-      margin: 5px 0;
     }
   }
 }
