@@ -9,9 +9,11 @@
         <input v-model="lastName" />
         <label>Email</label>
         <input v-model="email" />
-        <label>Job interests</label>
+        <label>Job Position</label>
+        <v-select v-model="selectedPosition" :options="openPositions"></v-select>
+        <label>Motivation</label>
         <textarea v-model="interests" />
-        <button type="submit" :class="{loading: isLoading}">Subscribe</button>
+        <button type="submit" :class="{loading: isLoading}">Submit</button>
       </form>
 
       <div v-if="error" class="error">{{ error }}</div>
@@ -21,3 +23,4 @@
 
 <script src="./Form.js" />
 <style lang="scss" src="./Form.scss" scoped />
+

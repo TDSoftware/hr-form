@@ -1,4 +1,4 @@
-import { http } from "../../utils/http";
+import { xml, http } from "../../utils/http";
 
 export default {
     name: "Form",
@@ -9,21 +9,29 @@ export default {
             email: "",
             interests: "",
             error: "",
-            isLoading: false
+            isLoading: false,
+            openPositions: [],
+            selectedPosition: ""
         };
     },
     created() {
-
-        // this.get();
+        this.get();
     },
     methods: {
         async get() {
             this.error = "";
             try {
-                const response = await http().get("candidate?");
-                console.log("candidate", response.data);
-                const response2 = await http().get("application");
-                console.log("job", response2.data);
+                 const response = await xml().get();      
+                 console.log("open positions", response.data);          
+                 const parser = new DOMParser();
+                 const xmlDoc = parser.parseFromString(response.data, "application/xml");
+                 const nameElements = xmlDoc.getElementsByTagName("name");
+                 for (let i = 0; i < nameElements.length; i++) {
+                    const element = nameElements[i];
+                    if (element.parentNode.nodeName === "position") {
+                        this.openPositions.push(element.innerHTML);
+                    }
+                }
             } catch(error) {
                 const errorString: string = error.response?.data?.message || "Sending form failed";
                 this.error = "Error: " + errorString;
@@ -33,14 +41,13 @@ export default {
             this.error = "";
             this.isLoading = true;
             try {
-                await http().post("candidate", {
-                    profile: {
-                        firstname: this.firstName,
-                        lastname: this.lastName
-                    },
-                    email: this.email,
-                    "candidate_tag_ids": [this.$route.params?.id],
-                    "motivational_letter": this.interests
+                await http().post("data", {
+                    "first_name": this.firstName,
+                    "last_name": this.lastName,
+                    "email": this.email,
+                    "job_position_id": 893585,
+                    "message": this.selectedPosition + " " + this.interests,
+                    "application_date": new Date().toISOString().split("T")[0]
                 });
                 this.$toastr.render("Form send successfully");
                 this.clearForm();
